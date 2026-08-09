@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -6,11 +7,12 @@ public class Parser {
     private int position = 0;
 
     public Parser(List<Token> tokens) {
-
         this.tokens = tokens;
     }
 
-    public void parse() {
+    public List<Statement> parse() {
+
+        List<Statement> statements = new ArrayList<>();
 
         while (position < tokens.size()) {
 
@@ -19,60 +21,76 @@ public class Parser {
             if (token.getType().equals("KEYWORD")) {
 
                 if (token.getValue().equals("let")) {
-
-                    parseLet();
+                    statements.add(parseLet());
 
                 } else if (token.getValue().equals("print")) {
-
-                    parsePrint();
+                    statements.add(parsePrint());
 
                 } else {
-
-                    System.out.println(
-                        "Unknown keyword: " + token.getValue()
-                    );
-
                     position++;
                 }
 
             } else {
-
                 position++;
             }
         }
+
+        return statements;
     }
 
-    private void parseLet() {
+    private Statement parseLet() {
 
-        position++;
+        position++; // let
 
         Token variable = tokens.get(position);
-        position++;
+        position++; // variable
 
-        Token equals = tokens.get(position);
-        position++;
+        position++; // =
 
-        Token value = tokens.get(position);
-        position++;
+        String expression = readExpression();
 
-        System.out.println(
-            "Variable: " + variable.getValue()
-        );
-
-        System.out.println(
-            "Value: " + value.getValue()
+        return new Statement(
+                "LET",
+                variable.getValue(),
+                expression,
+                null,
+                null
         );
     }
 
-    private void parsePrint() {
+    private Statement parsePrint() {
 
-        position++;
+        position++; // print
 
-        Token value = tokens.get(position);
-        position++;
+        String expression = readExpression();
 
-        System.out.println(
-            "Print: " + value.getValue()
+        return new Statement(
+                "PRINT",
+                null,
+                expression,
+                null,
+                null
         );
+    }
+
+    private String readExpression() {
+
+        StringBuilder expression = new StringBuilder();
+
+        while (position < tokens.size()) {
+
+            Token token = tokens.get(position);
+
+            // Stop when another statement begins
+            if (token.getType().equals("KEYWORD")) {
+                break;
+            }
+
+            expression.append(token.getValue());
+
+            position++;
+        }
+
+        return expression.toString();
     }
 }

@@ -89,6 +89,13 @@ public class Lexer {
 
                 tokens.add(new Token("EQUAL", "="));
 
+            } else if (current == '(') {
+
+                tokens.add(new Token("LEFT_PAREN", "("));
+        
+            } else if (current == ')') {
+        
+                tokens.add(new Token("RIGHT_PAREN", ")"));
             } else {
 
                 tokens.add(new Token("UNKNOWN",

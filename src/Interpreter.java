@@ -5,93 +5,32 @@ public class Interpreter {
 
     private Map<String, Integer> variables = new HashMap<>();
 
-    public void run(String code) {
+    public void execute(Statement statement) {
 
-        code = code.trim();
+        if (statement.type.equals("LET")) {
 
-        if (code.isEmpty()) {
-            return;
-        }
+            int value = evaluate(statement.value);
 
-        if (code.startsWith("let ")) {
+            variables.put(
+                    statement.name,
+                    value
+            );
 
-            String statement = code.substring(4).trim();
+        } else if (statement.type.equals("PRINT")) {
 
-            String[] parts = statement.split("=");
+            int value = evaluate(statement.value);
 
-            String variableName = parts[0].trim();
-            int value = Integer.parseInt(parts[1].trim());
-
-            variables.put(variableName, value);
-
-            return;
-        }
-
-        if (code.startsWith("print ")) {
-
-            String expression = code.substring(6).trim();
-
-            if (expression.contains("+")) {
-
-                String[] numbers = expression.split("\\+");
-
-                int first = getValue(numbers[0]);
-                int second = getValue(numbers[1]);
-
-                System.out.println(first + second);
-
-            } else if (expression.contains("-")) {
-
-                String[] numbers = expression.split("-");
-
-                int first = getValue(numbers[0]);
-                int second = getValue(numbers[1]);
-
-                System.out.println(first - second);
-
-            } else if (expression.contains("*")) {
-
-                String[] numbers = expression.split("\\*");
-
-                int first = getValue(numbers[0]);
-                int second = getValue(numbers[1]);
-
-                System.out.println(first * second);
-
-            } else if (expression.contains("/")) {
-
-                String[] numbers = expression.split("/");
-
-                int first = getValue(numbers[0]);
-                int second = getValue(numbers[1]);
-
-                System.out.println(first / second);
-
-            } else {
-
-                if (variables.containsKey(expression)) {
-
-                    System.out.println(variables.get(expression));
-
-                } else {
-
-                    System.out.println(expression);
-                }
-
-            }
+            System.out.println(value);
         }
     }
 
-    private int getValue(String value) {
+    private int evaluate(String expression) {
 
-        value = value.trim();
+        expression = expression.trim();
 
-        if (variables.containsKey(value)) {
-
-            return variables.get(value);
-        }
-
-        return Integer.parseInt(value);
+        return new ExpressionEvaluator(
+                expression,
+                variables
+        ).evaluate();
     }
-
 }
