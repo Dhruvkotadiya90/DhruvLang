@@ -1,28 +1,18 @@
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        try {
+        String code = "if x > 10";
 
-            List<String> lines = Files.readAllLines(
-                Path.of("src", "hello.D")
-            );
+        Lexer lexer = new Lexer();
 
-            Interpreter interpreter = new Interpreter();
+        List<Token> tokens = lexer.tokenize(code);
 
-            for (String line : lines) {
+        for (Token token : tokens) {
 
-                interpreter.run(line);
-            }
-
-        } catch (Exception e) {
-
-            System.out.println("Error running DhruvLang.");
-            e.printStackTrace();
+            System.out.println(token);
         }
     }
 }
