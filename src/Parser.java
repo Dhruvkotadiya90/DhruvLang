@@ -21,12 +21,19 @@ public class Parser {
             if (token.getType().equals("KEYWORD")) {
 
                 if (token.getValue().equals("let")) {
+
                     statements.add(parseLet());
-
+                
                 } else if (token.getValue().equals("print")) {
+                
                     statements.add(parsePrint());
-
+                
+                } else if (token.getValue().equals("if")) {
+                
+                    statements.add(parseIf());
+                
                 } else {
+                
                     position++;
                 }
 
@@ -50,12 +57,13 @@ public class Parser {
         String expression = readExpression();
 
         return new Statement(
-                "LET",
-                variable.getValue(),
-                expression,
-                null,
-                null
-        );
+            "LET",
+            variable.getValue(),
+            expression,
+            null,
+            null,
+            null
+    );
     }
 
     private Statement parsePrint() {
@@ -65,9 +73,26 @@ public class Parser {
         String expression = readExpression();
 
         return new Statement(
-                "PRINT",
+            "PRINT",
+            null,
+            expression,
+            null,
+            null,
+            null
+    );
+    }
+
+    private Statement parseIf() {
+
+        position++; // skip "if"
+    
+        String condition = readExpression();
+    
+        return new Statement(
+                "IF",
                 null,
-                expression,
+                condition,
+                null,
                 null,
                 null
         );
@@ -76,21 +101,24 @@ public class Parser {
     private String readExpression() {
 
         StringBuilder expression = new StringBuilder();
-
+    
         while (position < tokens.size()) {
-
+    
             Token token = tokens.get(position);
-
+    
             // Stop when another statement begins
-            if (token.getType().equals("KEYWORD")) {
-                break;
-            }
-
+            if (token.getType().equals("KEYWORD")
+                || token.getType().equals("LEFT_BRACE")
+                || token.getType().equals("RIGHT_BRACE")) {
+        
+            break;
+        }
+    
             expression.append(token.getValue());
-
+    
             position++;
         }
-
+    
         return expression.toString();
     }
 }

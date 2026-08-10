@@ -17,19 +17,53 @@ public class ExpressionEvaluator {
 
     public int evaluate() {
 
-        int result = parseExpression();
-
+        int result = parseComparison();
+    
         skipSpaces();
-
+    
         if (position < expression.length()) {
-
+    
             throw new RuntimeException(
                     "Unexpected character: "
                     + expression.charAt(position)
             );
         }
-
+    
         return result;
+    }
+
+    private int parseComparison() {
+
+        int left = parseExpression();
+    
+        skipSpaces();
+    
+        if (matchString(">=")) {
+            int right = parseExpression();
+            return left >= right ? 1 : 0;
+    
+        } else if (matchString("<=")) {
+            int right = parseExpression();
+            return left <= right ? 1 : 0;
+    
+        } else if (matchString("==")) {
+            int right = parseExpression();
+            return left == right ? 1 : 0;
+    
+        } else if (matchString("!=")) {
+            int right = parseExpression();
+            return left != right ? 1 : 0;
+    
+        } else if (match('>')) {
+            int right = parseExpression();
+            return left > right ? 1 : 0;
+    
+        } else if (match('<')) {
+            int right = parseExpression();
+            return left < right ? 1 : 0;
+        }
+    
+        return left;
     }
 
     // Handles + and -
@@ -177,6 +211,18 @@ public class ExpressionEvaluator {
             return true;
         }
 
+        return false;
+    }
+
+    private boolean matchString(String expected) {
+
+        if (expression.startsWith(expected, position)) {
+    
+            position += expected.length();
+    
+            return true;
+        }
+    
         return false;
     }
 

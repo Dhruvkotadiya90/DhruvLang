@@ -51,24 +51,24 @@ public class Lexer {
                 String value = word.toString();
 
                 if (value.equals("let")
-                    || value.equals("print")
-                    || value.equals("if")
-                    || value.equals("else")
-                    || value.equals("while")
-                    || value.equals("fn")
-                    || value.equals("return")) {
-            
-                tokens.add(new Token("KEYWORD", value));
-            
-            } else {
-            
-                tokens.add(new Token("IDENTIFIER", value));
-            }
+                        || value.equals("print")
+                        || value.equals("if")
+                        || value.equals("else")
+                        || value.equals("while")
+                        || value.equals("fn")
+                        || value.equals("return")) {
+
+                    tokens.add(new Token("KEYWORD", value));
+
+                } else {
+
+                    tokens.add(new Token("IDENTIFIER", value));
+                }
 
                 continue;
             }
 
-            // Operators
+            // Operators and symbols
             if (current == '+') {
 
                 tokens.add(new Token("PLUS", "+"));
@@ -87,18 +87,76 @@ public class Lexer {
 
             } else if (current == '=') {
 
-                tokens.add(new Token("EQUAL", "="));
+                // Check for ==
+                if (i + 1 < code.length() && code.charAt(i + 1) == '=') {
+
+                    tokens.add(new Token("EQUAL_EQUAL", "=="));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("EQUAL", "="));
+                }
+
+            } else if (current == '!') {
+
+                // Check for !=
+                if (i + 1 < code.length() && code.charAt(i + 1) == '=') {
+
+                    tokens.add(new Token("NOT_EQUAL", "!="));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("UNKNOWN", "!"));
+                }
+
+            } else if (current == '>') {
+
+                // Check for >=
+                if (i + 1 < code.length() && code.charAt(i + 1) == '=') {
+
+                    tokens.add(new Token("GREATER_EQUAL", ">="));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("GREATER", ">"));
+                }
+
+            } else if (current == '<') {
+
+                // Check for <=
+                if (i + 1 < code.length() && code.charAt(i + 1) == '=') {
+
+                    tokens.add(new Token("LESS_EQUAL", "<="));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("LESS", "<"));
+                }
 
             } else if (current == '(') {
 
                 tokens.add(new Token("LEFT_PAREN", "("));
-        
+
             } else if (current == ')') {
-        
+
                 tokens.add(new Token("RIGHT_PAREN", ")"));
+
+            } else if (current == '{') {
+
+                tokens.add(new Token("LEFT_BRACE", "{"));
+
+            } else if (current == '}') {
+
+                tokens.add(new Token("RIGHT_BRACE", "}"));
+
             } else {
 
-                tokens.add(new Token("UNKNOWN",
+                tokens.add(new Token(
+                        "UNKNOWN",
                         String.valueOf(current)));
             }
 

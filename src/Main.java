@@ -23,6 +23,10 @@ public class Main {
             List<Token> tokens =
                 lexer.tokenize(code.toString());
 
+                for (Token token : tokens) {
+                    System.out.println(token);
+                }
+
             Parser parser = new Parser(tokens);
 
             List<Statement> statements =
