@@ -1,12 +1,10 @@
-let x = 1
+let x = 20
+let y = 10
 
-while x <= 3 {
+print x > 10 || y > 20
+print x < 10 || y > 20
+print x < 10 || y < 20
 
-    if x == 2 {
-        print 20
-    } else {
-        print x
-    }
-
-    let x = x + 1
-}
+print x > 10 && y < 20
+print x < 10 && y < 20
+print x > 10 && y > 20

@@ -17,52 +17,107 @@ public class ExpressionEvaluator {
 
     public int evaluate() {
 
-        int result = parseComparison();
-    
+        int result = parseLogicalOr();
+
         skipSpaces();
-    
+
         if (position < expression.length()) {
-    
+
             throw new RuntimeException(
                     "Unexpected character: "
                     + expression.charAt(position)
             );
         }
-    
+
         return result;
     }
 
+    // Handles ||
+    private int parseLogicalOr() {
+
+        int result = parseLogicalAnd();
+
+        while (true) {
+
+            skipSpaces();
+
+            if (matchString("||")) {
+
+                int right = parseLogicalAnd();
+
+                result = (result != 0 || right != 0) ? 1 : 0;
+
+            } else {
+
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    // Handles &&
+    private int parseLogicalAnd() {
+
+        int result = parseComparison();
+
+        while (true) {
+
+            skipSpaces();
+
+            if (matchString("&&")) {
+
+                int right = parseComparison();
+
+                result = (result != 0 && right != 0) ? 1 : 0;
+
+            } else {
+
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    // Handles comparisons
     private int parseComparison() {
 
         int left = parseExpression();
-    
+
         skipSpaces();
-    
+
         if (matchString(">=")) {
+
             int right = parseExpression();
             return left >= right ? 1 : 0;
-    
+
         } else if (matchString("<=")) {
+
             int right = parseExpression();
             return left <= right ? 1 : 0;
-    
+
         } else if (matchString("==")) {
+
             int right = parseExpression();
             return left == right ? 1 : 0;
-    
+
         } else if (matchString("!=")) {
+
             int right = parseExpression();
             return left != right ? 1 : 0;
-    
+
         } else if (match('>')) {
+
             int right = parseExpression();
             return left > right ? 1 : 0;
-    
+
         } else if (match('<')) {
+
             int right = parseExpression();
             return left < right ? 1 : 0;
         }
-    
+
         return left;
     }
 
@@ -217,12 +272,12 @@ public class ExpressionEvaluator {
     private boolean matchString(String expected) {
 
         if (expression.startsWith(expected, position)) {
-    
+
             position += expected.length();
-    
+
             return true;
         }
-    
+
         return false;
     }
 

@@ -74,9 +74,9 @@ public class Parser {
     private Statement parsePrint() {
 
         position++; // print
-
+    
         String expression = readExpression();
-
+    
         return new Statement(
             "PRINT",
             null,
@@ -85,7 +85,7 @@ public class Parser {
             null,
             null,
             null
-    );
+        );
     }
 
     private Statement parseIf() {
@@ -282,7 +282,7 @@ public class Parser {
         while (position < tokens.size()) {
     
             Token token = tokens.get(position);
-    
+
             // Stop when another statement begins
             if (token.getType().equals("KEYWORD")
                 || token.getType().equals("LEFT_BRACE")

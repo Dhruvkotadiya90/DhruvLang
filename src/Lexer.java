@@ -60,7 +60,12 @@ public class Lexer {
 
                     tokens.add(new Token("KEYWORD", value));
 
-                } else {
+                } 
+                else if (current == ';') {
+
+                    tokens.add(new Token("SEMICOLON", ";"));
+                }
+                else {
 
                     tokens.add(new Token("IDENTIFIER", value));
                 }
@@ -153,7 +158,39 @@ public class Lexer {
 
                 tokens.add(new Token("RIGHT_BRACE", "}"));
 
-            } else {
+            } 
+            
+            else if (current == '&') {
+
+                // Check for &&
+                if (i + 1 < code.length() && code.charAt(i + 1) == '&') {
+
+                    tokens.add(new Token("AND_AND", "&&"));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("AND", "&"));
+                }
+
+            }
+
+            else if (current == '|') {
+
+                // Check for ||
+                if (i + 1 < code.length() && code.charAt(i + 1) == '|') {
+
+                    tokens.add(new Token("OR_OR", "||"));
+                    i++;
+
+                } else {
+
+                    tokens.add(new Token("OR", "|"));
+                }
+
+            }
+
+            else {
 
                 tokens.add(new Token(
                         "UNKNOWN",

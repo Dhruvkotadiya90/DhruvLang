@@ -8,7 +8,8 @@ public class Interpreter {
     public void execute(Statement statement) {
 
         if (statement.type.equals("LET")) {
-    
+
+
             int value = evaluate(statement.value);
     
             variables.put(
@@ -17,7 +18,7 @@ public class Interpreter {
             );
     
         } else if (statement.type.equals("PRINT")) {
-    
+        
             int value = evaluate(statement.value);
     
             System.out.println(value);
