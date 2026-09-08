@@ -1,6 +1,9 @@
 import java.util.Map;
+import java.util.Scanner;
 
 public class ExpressionEvaluator {
+
+    private static final Scanner scanner = new Scanner(System.in);
 
     private String expression;
     private int position = 0;
@@ -177,6 +180,30 @@ public class ExpressionEvaluator {
     private int parseFactor() {
 
         skipSpaces();
+
+        // Input
+if (expression.startsWith("input", position)) {
+
+    position += 5;
+
+    skipSpaces();
+
+    if (!match('(')) {
+        throw new RuntimeException("Expected '(' after input");
+    }
+
+    skipSpaces();
+
+    if (!match(')')) {
+        throw new RuntimeException("Expected ')' after input");
+    }
+
+    System.out.print("Enter value: ");
+
+    String value = scanner.nextLine();
+
+    return Integer.parseInt(value);
+}
 
         // Parentheses
         if (match('(')) {
