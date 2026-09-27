@@ -13,39 +13,41 @@ public class Parser {
     public List<Statement> parse() {
 
         List<Statement> statements = new ArrayList<>();
-
+    
         while (position < tokens.size()) {
-
-            Token token = tokens.get(position);
-
-            if (token.getType().equals("KEYWORD")) {
-
-                if (token.getValue().equals("let")) {
-
-                    statements.add(parseLet());
-                
-                } else if (token.getValue().equals("print")) {
-                
-                    statements.add(parsePrint());
-                
-                } else if (token.getValue().equals("if")) {
-                
-                    statements.add(parseIf());
-                
-                } else if (token.getValue().equals("while")) {
-                
-                    statements.add(parseWhile());
-                
-                } else {
-                
-                    position++;
-                }
-
-            } else {
-                position++;
+    
+            Statement statement = parseStatement();
+    
+            if (statement != null) {
+                statements.add(statement);
             }
         }
+    
+        return statements;
+    }
 
+    private List<Statement> parseBlock() {
+
+        position++; // skip {
+    
+        List<Statement> statements = new ArrayList<>();
+    
+        while (position < tokens.size()
+                && !tokens.get(position).getType().equals("RIGHT_BRACE")) {
+    
+            Statement statement = parseStatement();
+    
+            if (statement != null) {
+                statements.add(statement);
+            }
+        }
+    
+        if (position < tokens.size()
+                && tokens.get(position).getType().equals("RIGHT_BRACE")) {
+    
+            position++; // skip }
+        }
+    
         return statements;
     }
 
@@ -89,110 +91,45 @@ public class Parser {
     }
 
     private Statement parseIf() {
-
         position++; // skip if
     
         String condition = readExpression();
     
         if (position >= tokens.size()
                 || !tokens.get(position).getType().equals("LEFT_BRACE")) {
-    
-            throw new RuntimeException(
-                    "Expected '{' after if condition"
-            );
+            throw new RuntimeException("Expected '{' after if condition");
         }
     
-        position++; // skip {
-    
-        List<Statement> body = new ArrayList<>();
-    
-        while (position < tokens.size()
-                && !tokens.get(position).getType().equals("RIGHT_BRACE")) {
-    
-            Token token = tokens.get(position);
-    
-            if (token.getType().equals("KEYWORD")) {
-    
-                if (token.getValue().equals("let")) {
-    
-                    body.add(parseLet());
-    
-                } else if (token.getValue().equals("print")) {
-    
-                    body.add(parsePrint());
-    
-                } else if (token.getValue().equals("if")) {
-    
-                    body.add(parseIf());
-    
-                }
-                else if (token.getValue().equals("while")) {
-    
-                    body.add(parseWhile());
-    
-                }  
-                
-                else {
-    
-                    position++;
-                }
-    
-            } else {
-    
-                position++;
-            }
-        }
-    
-        position++; // skip }
-    
-        // Check for else
+        List<Statement> body = parseBlock();
         List<Statement> elseBody = null;
     
+        // Check for else
         if (position < tokens.size()
                 && tokens.get(position).getType().equals("KEYWORD")
                 && tokens.get(position).getValue().equals("else")) {
     
             position++; // skip else
     
-            if (position >= tokens.size()
-                    || !tokens.get(position).getType().equals("LEFT_BRACE")) {
+            // else if
+            if (position < tokens.size()
+                    && tokens.get(position).getType().equals("KEYWORD")
+                    && tokens.get(position).getValue().equals("if")) {
     
-                throw new RuntimeException(
-                        "Expected '{' after else"
-                );
-            }
+                Statement elseIfStatement = parseIf();
     
-            position++; // skip {
+                elseBody = new ArrayList<>();
+                elseBody.add(elseIfStatement);
     
-            elseBody = new ArrayList<>();
+            } else {
     
-            while (position < tokens.size()
-                    && !tokens.get(position).getType().equals("RIGHT_BRACE")) {
-    
-                Token token = tokens.get(position);
-    
-                if (token.getType().equals("KEYWORD")) {
-    
-                    if (token.getValue().equals("let")) {
-    
-                        elseBody.add(parseLet());
-    
-                    } else if (token.getValue().equals("print")) {
-    
-                        elseBody.add(parsePrint());
-    
-                    } else {
-    
-                        position++;
-                    }
-    
-                } else {
-    
-                    position++;
+                // normal else
+                if (position >= tokens.size()
+                        || !tokens.get(position).getType().equals("LEFT_BRACE")) {
+                    throw new RuntimeException("Expected '{' after else");
                 }
-            }
     
-            position++; // skip }
+                elseBody = parseBlock();
+            }
         }
     
         return new Statement(
@@ -220,49 +157,7 @@ public class Parser {
             );
         }
     
-        position++; // skip {
-    
-        List<Statement> body = new ArrayList<>();
-    
-        while (position < tokens.size()
-                && !tokens.get(position).getType().equals("RIGHT_BRACE")) {
-    
-            Token token = tokens.get(position);
-    
-            if (token.getType().equals("KEYWORD")) {
-    
-                if (token.getValue().equals("let")) {
-    
-                    body.add(parseLet());
-    
-                } else if (token.getValue().equals("print")) {
-    
-                    body.add(parsePrint());
-    
-                } else if (token.getValue().equals("if")) {
-    
-                    body.add(parseIf());
-    
-                } else if (token.getValue().equals("while")) {
-    
-                    body.add(parseWhile());
-    
-                } else {
-    
-                    position++;
-                }
-    
-            } else {
-    
-                position++;
-            }
-        }
-    
-        if (position < tokens.size()
-                && tokens.get(position).getType().equals("RIGHT_BRACE")) {
-    
-            position++;
-        }
+        List<Statement> body = parseBlock();
     
         return new Statement(
                 "WHILE",
@@ -275,6 +170,72 @@ public class Parser {
         );
     }
 
+    private Statement parseStatement() {
+
+        Token token = tokens.get(position);
+    
+        if (token.getType().equals("KEYWORD")) {
+    
+            if (token.getValue().equals("let")) {
+                return parseLet();
+    
+            } else if (token.getValue().equals("print")) {
+                return parsePrint();
+    
+            } else if (token.getValue().equals("if")) {
+                return parseIf();
+    
+            } else if (token.getValue().equals("while")) {
+                return parseWhile();
+            } else if (token.getValue().equals("break")) {
+                position++;
+
+                if (position < tokens.size()
+                    && tokens.get(position).getType().equals("SEMICOLON")) {
+                position++;
+            }
+
+                return new Statement(
+                        "BREAK",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            }
+        }
+
+        if (token.getType().equals("IDENTIFIER")) {
+            return parseAssignment();
+        }
+    
+        position++;
+        return null;
+    }
+
+    private Statement parseAssignment() {
+
+        String variableName = tokens.get(position).getValue();
+    
+        position++; // skip variable
+    
+        position++; // skip =
+    
+        String expression = readExpression();
+    
+        return new Statement(
+                "ASSIGN",
+                variableName,
+                expression,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
     private String readExpression() {
 
         StringBuilder expression = new StringBuilder();
@@ -282,16 +243,22 @@ public class Parser {
         while (position < tokens.size()) {
     
             Token token = tokens.get(position);
-
-            // Stop when another statement begins
+    
             if (token.getType().equals("KEYWORD")
-                || token.getType().equals("LEFT_BRACE")
-                || token.getType().equals("RIGHT_BRACE")) {
-        
-            break;
-        }
+                    || token.getType().equals("LEFT_BRACE")
+                    || token.getType().equals("RIGHT_BRACE")
+                    || token.getType().equals("SEMICOLON")) {
+    
+                break;
+            }
     
             expression.append(token.getValue());
+    
+            position++;
+        }
+    
+        if (position < tokens.size()
+                && tokens.get(position).getType().equals("SEMICOLON")) {
     
             position++;
         }

@@ -51,7 +51,13 @@ public class Main {
                     lexer.tokenize(code.toString());
     
             Parser parser = new Parser(tokens);
-    
+            
+            // for (Token token : tokens) {
+            //     System.out.println(
+            //         token.getType() + " -> " + token.getValue()
+            //     );
+            // }
+
             List<Statement> statements =
                     parser.parse();
     

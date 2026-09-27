@@ -56,14 +56,11 @@ public class Lexer {
                         || value.equals("else")
                         || value.equals("while")
                         || value.equals("fn")
+                        || value.equals("break")
                         || value.equals("return")) {
 
                     tokens.add(new Token("KEYWORD", value));
 
-                } 
-                else if (current == ';') {
-
-                    tokens.add(new Token("SEMICOLON", ";"));
                 }
                 else {
 
@@ -188,6 +185,8 @@ public class Lexer {
                     tokens.add(new Token("OR", "|"));
                 }
 
+            } else if(current == ';'){
+                tokens.add(new Token("SEMICOLON", ";"));
             }
 
             else {

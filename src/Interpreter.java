@@ -17,7 +17,22 @@ public class Interpreter {
                     value
             );
     
-        } else if (statement.type.equals("PRINT")) {
+        } 
+        
+        else if (statement.type.equals("ASSIGN")) {
+
+            if (!variables.containsKey(statement.name)) {
+                throw new RuntimeException(
+                        "Unknown variable: " + statement.name
+                );
+            }
+        
+            int value = evaluate(statement.value);
+        
+            variables.put(statement.name, value);
+        }
+
+        else if (statement.type.equals("PRINT")) {
         
             int value = evaluate(statement.value);
     
@@ -41,13 +56,19 @@ public class Interpreter {
             }
     
         } else if (statement.type.equals("WHILE")) {
-    
+
             while (evaluate(statement.value) != 0) {
-    
-                for (Statement bodyStatement : statement.body) {
-                    execute(bodyStatement);
+        
+                try {
+                    for (Statement bodyStatement : statement.body) {
+                        execute(bodyStatement);
+                    }
+                } catch (BreakException e) {
+                    break;
                 }
             }
+        } else if (statement.type.equals("BREAK")) {
+            throw new BreakException();
         }
     }
 
