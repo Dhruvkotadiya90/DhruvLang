@@ -63,12 +63,17 @@ public class Interpreter {
                     for (Statement bodyStatement : statement.body) {
                         execute(bodyStatement);
                     }
+                } catch (ContinueException e) {
+                    continue;
                 } catch (BreakException e) {
                     break;
                 }
             }
-        } else if (statement.type.equals("BREAK")) {
+        } 
+        else if (statement.type.equals("BREAK")) {
             throw new BreakException();
+        } else if (statement.type.equals("CONTINUE")) {
+            throw new ContinueException();
         }
     }
 

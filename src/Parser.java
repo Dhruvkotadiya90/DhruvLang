@@ -188,15 +188,35 @@ public class Parser {
             } else if (token.getValue().equals("while")) {
                 return parseWhile();
             } else if (token.getValue().equals("break")) {
-                position++;
 
+                position++; // skip break
+            
                 if (position < tokens.size()
-                    && tokens.get(position).getType().equals("SEMICOLON")) {
-                position++;
-            }
-
+                        && tokens.get(position).getType().equals("SEMICOLON")) {
+                    position++; // skip ;
+                }
+            
                 return new Statement(
                         "BREAK",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            
+            } else if (token.getValue().equals("continue")) {
+            
+                position++; // skip continue
+            
+                if (position < tokens.size()
+                        && tokens.get(position).getType().equals("SEMICOLON")) {
+                    position++; // skip ;
+                }
+            
+                return new Statement(
+                        "CONTINUE",
                         null,
                         null,
                         null,
