@@ -264,9 +264,11 @@ public class Parser {
     
             Token token = tokens.get(position);
     
-            if (token.getType().equals("KEYWORD")
+            if (token.getType().equals("KEYWORD") 
+                    && !token.getValue().equals("input")
                     || token.getType().equals("LEFT_BRACE")
                     || token.getType().equals("RIGHT_BRACE")
+                    // || token.getType().equals("RIGHT_PAREN")
                     || token.getType().equals("SEMICOLON")) {
     
                 break;

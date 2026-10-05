@@ -58,6 +58,7 @@ public class Lexer {
                         || value.equals("fn")
                         || value.equals("break")
                         || value.equals("continue")
+                        || value.equals("input")
                         || value.equals("return")) {
 
                     tokens.add(new Token("KEYWORD", value));

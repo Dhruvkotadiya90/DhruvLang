@@ -1,11 +1,6 @@
-let x = 0;
+let x = input();
 
-while x < 5 {
-    x = x + 1;
-
-    if x == 3 {
-        continue;
-    }
-
+while x <= 10 {
     print x;
+    x = x + 1;
 }
