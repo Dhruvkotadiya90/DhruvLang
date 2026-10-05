@@ -274,7 +274,16 @@ public class Parser {
                 break;
             }
     
-            expression.append(token.getValue());
+            if (token.getType().equals("STRING")) {
+
+                expression.append("\"")
+                          .append(token.getValue())
+                          .append("\"");
+            
+            } else {
+            
+                expression.append(token.getValue());
+            }
     
             position++;
         }

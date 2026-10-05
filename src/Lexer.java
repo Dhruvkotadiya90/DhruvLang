@@ -19,6 +19,30 @@ public class Lexer {
                 continue;
             }
 
+            // String
+if (current == '"') {
+
+    i++; // skip opening "
+
+    StringBuilder string = new StringBuilder();
+
+    while (i < code.length() && code.charAt(i) != '"') {
+
+        string.append(code.charAt(i));
+        i++;
+    }
+
+    if (i >= code.length()) {
+        throw new RuntimeException("Unclosed string");
+    }
+
+    i++; // skip closing "
+
+    tokens.add(new Token("STRING", string.toString()));
+
+    continue;
+}
+
             // Number
             if (Character.isDigit(current)) {
 

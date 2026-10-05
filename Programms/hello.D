@@ -1,6 +1,6 @@
-let x = input();
+let name = "Dhruv";
+print name;
 
-while x <= 10 {
-    print x;
-    x = x + 1;
-}
+let x = 10;
+let y = x + 5;
+print y;

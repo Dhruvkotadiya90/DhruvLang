@@ -3,14 +3,14 @@ import java.util.Map;
 
 public class Interpreter {
 
-    private Map<String, Integer> variables = new HashMap<>();
+    private Map<String, Object> variables = new HashMap<>();
 
     public void execute(Statement statement) {
 
         if (statement.type.equals("LET")) {
 
 
-            int value = evaluate(statement.value);
+            Object value = evaluate(statement.value);
     
             variables.put(
                     statement.name,
@@ -27,20 +27,20 @@ public class Interpreter {
                 );
             }
         
-            int value = evaluate(statement.value);
+            Object value = evaluate(statement.value);
         
             variables.put(statement.name, value);
         }
 
         else if (statement.type.equals("PRINT")) {
         
-            int value = evaluate(statement.value);
+            Object value = evaluate(statement.value);
     
             System.out.println(value);
     
         } else if (statement.type.equals("IF")) {
     
-            int condition = evaluate(statement.value);
+            int condition = (Integer) evaluate(statement.value);
     
             if (condition != 0) {
     
@@ -57,7 +57,7 @@ public class Interpreter {
     
         } else if (statement.type.equals("WHILE")) {
 
-            while (evaluate(statement.value) != 0) {
+            while ( (Integer) evaluate(statement.value) != 0) {
         
                 try {
                     for (Statement bodyStatement : statement.body) {
@@ -77,7 +77,7 @@ public class Interpreter {
         }
     }
 
-    private int evaluate(String expression) {
+    private Object evaluate(String expression) {
 
         expression = expression.trim();
 

@@ -8,32 +8,47 @@ public class ExpressionEvaluator {
     private String expression;
     private int position = 0;
 
-    private Map<String, Integer> variables;
+    private Map<String, Object> variables;
 
     public ExpressionEvaluator(
             String expression,
-            Map<String, Integer> variables) {
+            Map<String, Object> variables) {
 
         this.expression = expression;
         this.variables = variables;
     }
 
-    public int evaluate() {
+    public Object evaluate() {
 
+        if (expression.startsWith("\"")
+                && expression.endsWith("\"")) {
+    
+            return expression.substring(
+                    1,
+                    expression.length() - 1
+            );
+        }
+    
+        if (variables.containsKey(expression)) {
+            return variables.get(expression);
+        }
+    
         int result = parseLogicalOr();
-
+    
         skipSpaces();
-
+    
         if (position < expression.length()) {
-
+    
             throw new RuntimeException(
                     "Unexpected character: "
                     + expression.charAt(position)
             );
         }
-
+    
         return result;
     }
+
+    
 
     // Handles ||
     private int parseLogicalOr() {
@@ -244,7 +259,7 @@ if (expression.startsWith("input", position)) {
                 );
             }
 
-            return variables.get(name);
+            return (Integer) variables.get(name);
         }
 
         throw new RuntimeException(
